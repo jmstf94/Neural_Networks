@@ -1,0 +1,39 @@
+Model: "sequential_2"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ dense_10 (Dense)            (None, 768)               590592    
+                                                                 
+ dropout_8 (Dropout)         (None, 768)               0         
+                                                                 
+ dense_11 (Dense)            (None, 384)               295296    
+                                                                 
+ dropout_9 (Dropout)         (None, 384)               0         
+                                                                 
+ dense_12 (Dense)            (None, 192)               73920     
+                                                                 
+ dropout_10 (Dropout)        (None, 192)               0         
+                                                                 
+ dense_13 (Dense)            (None, 81)                15633     
+                                                                 
+ dropout_11 (Dropout)        (None, 81)                0         
+                                                                 
+ dense_14 (Dense)            (None, 40)                3280      
+                                                                 
+ dropout_12 (Dropout)        (None, 40)                0         
+                                                                 
+ dense_15 (Dense)            (None, 10)                410       
+                                                                 
+ dropout_13 (Dropout)        (None, 10)                0         
+                                                                 
+ dense_16 (Dense)            (None, 4)                 44        
+                                                                 
+ dropout_14 (Dropout)        (None, 4)                 0         
+                                                                 
+ dense_17 (Dense)            (None, 1)                 5         
+                                                                 
+=================================================================
+Total params: 979,180
+Trainable params: 979,180
+Non-trainable params: 0
+_________________________________________________________________
