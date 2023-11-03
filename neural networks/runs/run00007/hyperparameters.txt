@@ -1,0 +1,16 @@
+
+ ITERATIONS:5
+
+ EPOCHS:50
+
+ LOSS:'binary_crossentropy'
+
+ OPTIMIZER:Adam(learning_rate=0.0001)
+
+ METRICS:['acc', metrics.precision, metrics.recall, metrics.f1]
+
+ BATCH_SIZE:90.0
+
+ TEST_SIZE:0.3
+
+ RELOVIR:0.31784478697059254

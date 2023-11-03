@@ -1,0 +1,31 @@
+Model: "sequential_45"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ dense_270 (Dense)           (None, 340)               261460    
+                                                                 
+ dropout_225 (Dropout)       (None, 340)               0         
+                                                                 
+ dense_271 (Dense)           (None, 698)               238018    
+                                                                 
+ dropout_226 (Dropout)       (None, 698)               0         
+                                                                 
+ dense_272 (Dense)           (None, 430)               300570    
+                                                                 
+ dropout_227 (Dropout)       (None, 430)               0         
+                                                                 
+ dense_273 (Dense)           (None, 653)               281443    
+                                                                 
+ dropout_228 (Dropout)       (None, 653)               0         
+                                                                 
+ dense_274 (Dense)           (None, 643)               420522    
+                                                                 
+ dropout_229 (Dropout)       (None, 643)               0         
+                                                                 
+ dense_275 (Dense)           (None, 1)                 644       
+                                                                 
+=================================================================
+Total params: 1,502,657
+Trainable params: 1,502,657
+Non-trainable params: 0
+_________________________________________________________________
