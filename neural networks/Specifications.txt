@@ -1,0 +1,17 @@
+What must this code do?
+
+I need to be able to easily run a hyperspace of parameters and test it on a dataset. 
+
+So I need to have phases of training based on the different hyperspaces that I will run the model.
+
+So maybe create a folder "experiments" inside of it there are the "phases" folders, and in each folder there is the "runs" that the hypeoptimizing algorithm did.
+
+So for each phase what things should I keep?
+
+So for each run what thing should I keep?
+
+Important note!!!!! Each hyperspace instance creates and fits a model with the specified parameters for a number of iterations. 
+
+Thus we get for the "same model" i.e. identical architecture, for some number of times (some number of ITERATIONS) with completely randomized train/test split. This helps us to evaluate our trust in the model since we have a lot of random parameters.
+
+Notice that every time we define a model we define hyperparameters. The list of hyperparameters is big and usually there are many stuff we are not defining. So the bigger the hyperparamter dictionary is the better. And if you don't want to check a hyperparameter just put the default value. So basically the averages are needed in order to makes sure our intentional or unintentional randomness in the model doesn't gives us random results but they are consistent. This of course happens by epoch.

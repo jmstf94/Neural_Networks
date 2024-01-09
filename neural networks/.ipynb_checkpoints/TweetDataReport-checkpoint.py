@@ -26,6 +26,8 @@ def print_tweet_report(df):
     """
     bla bla bla
     """
+    df = df.copy()
+    
     column_names = list(df.columns)
     subseries =  [df.iloc[:,n] for n in range(0,len(column_names))]
     def get_shapelen(x):
@@ -80,7 +82,7 @@ def datasplit(df,testsize,relovir=None):
     y_test = y_test.to_frame().reset_index(drop = True)
     return training_set_X, test_set_X, y_train.to_numpy().reshape(-1), y_test.to_numpy().reshape(-1)
 
-def datasplit_new(df,testsize,relovir=None):
+def datasplit_new(df,testsize,relovir):
     """
     Firstly we split the dataset into train and test parts.
     
@@ -92,50 +94,56 @@ def datasplit_new(df,testsize,relovir=None):
     
     Returns as a (examples,768) np array the representations and the y as (examples,) shaped np array.
     
-    Future: maybe it would be better to split the dataset by relevance and then pick up the "correct" 
-    relovir ratio for the test dataset from the ratio of the total dataset. 
-    Now we include some randomness which is not particularly wanted due to the fact that after the split
-    the relovir ratios of the training and test parts won't match exactly. 
-    I will have to make 20 30 iterations per model to make sure we get the average.
-    In the other case we were going to be satisfied with 5. 
-    """
-    df = df.copy() # make a copied instance of the dataset
+    Future: we need to be able to reduce zero and one examples accordinglydepending of which 
     
-    X_train, X_test, y_train, y_test = train_test_split(df['reps'], df['relevance'], test_size = testsize)
-
-    if relovir is not None:
-        
-        Relovir_Error(df,relovir) # check if you can accept the relovir variable instance maybe the ratio is not that big
-        
-        # now we reconstruct the training dataset in order to use the relovir 
+    """
+    # make a copied instance of the dataset
+    df = df.copy()
+    # we split the dataset into train and test subsets
+    df_X_train, df_X_test, df_y_train, df_y_test = train_test_split(df['reps'], df['relevance'], test_size = testsize)
+    # reconstruct training set
+    if relovir>0:
         training_set = pd.DataFrame()
-        training_set['reps'] = X_train
-        training_set['relevance'] = y_train
+        training_set['reps'] = df_X_train.copy()
+        training_set['relevance'] = df_y_train.copy()
         training_set.reset_index(drop = True)
-        # we split the training data in irrelevant and relevant cases
-        # we make sure the zeros and the ones correctly correspond to irr and rel respectively
+        # we split the training dataset by relervance into two DataFrames irr and rel
         grouping = training_set.groupby('relevance')
         group_dict = {}
         for name, group in grouping:
             group_dict[str(name)] = group
         # we find the absolute numbers 
-        irr = group_dict['0']
-        rel = group_dict['1']
-        #print(len(irr)+len(rel))
-        #pickup all the irrelevants and the correct random part of the relevants
-        dfirr = irr.sample(frac = 1).reset_index(drop = True)
-        #print(len(dfirr))
-        dfrel = rel.sample(n = int(len(irr)*relovir)).reset_index(drop = True)
-        #print(len(dfrel))
-        #print(len(dfirr)+len(dfrel)
-        training_set = None
-        training_set = pd.concat([dfirr, dfrel]).sample(frac = 1).reset_index(drop = True)
-    
-    training_set_X = np.vstack(training_set['reps'])
-    test_set_X = np.vstack(X_test)
-    y_train = training_set['relevance'].to_frame().reset_index(drop = True)
-    y_test = y_test.to_frame().reset_index(drop = True)
-    return training_set_X, test_set_X, y_train.to_numpy().reshape(-1), y_test.to_numpy().reshape(-1)
+        df_training_irr = group_dict['0'].reset_index(drop = True)
+        df_training_rel = group_dict['1'].reset_index(drop = True)
+        # based on the relovir parameter pick up the set with the appropriate ratio, here an explanation for the inner if is needed:
+        Nrel = len(df_training_rel)
+        # print(Nrel)
+        Nirr = len(df_training_irr)
+        # print(Nirr)
+        N = Nrel + Nirr
+        if relovir<=1:
+            if relovir<Nrel/Nirr:
+                relevant_part = df_training_rel.sample(n = int(Nirr*relovir))
+                df_training = pd.concat([df_training_irr, relevant_part]).sample(frac=1).reset_index(drop = True)
+            else:
+                df_training = pd.concat([df_training_irr, df_training_rel]).sample(frac=1).reset_index(drop = True)
+        else:
+            if relovir<Nrel/Nirr:
+                irrelevant_part = df_training_irr.sample(n = int((1/relovir)*Nrel))
+                df_training = pd.concat([df_training_rel, irrelevant_part]).sample(frac=1).reset_index(drop = True)
+            else:
+                df_training = pd.concat([df_training_irr, df_training_rel]).sample(frac=1).reset_index(drop = True)
+        df_X_train = df_training['reps'].copy()
+        df_y_train = df_training['relevance'].copy()
+    else:
+        print("relovir can't be negative or zero")
+    df_X_train.apply(lambda x: x.reshape(768,))
+    df_X_test = df_X_test.copy().apply(lambda x: x.reshape(768,))
+    training_set_X = np.vstack(df_X_train)
+    test_set_X = np.vstack(df_X_test)
+    y_train = np.vstack(df_y_train).reshape(-1)
+    y_test = np.vstack(df_y_test).reshape(-1)
+    return training_set_X, test_set_X, y_train, y_test
 
 
 def preparer(df):
